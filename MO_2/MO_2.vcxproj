@@ -141,6 +141,10 @@
   <ItemGroup>
     <ClCompile Include="MO_2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Method_0.h" />
+    <ClInclude Include="Method_variable_metric.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

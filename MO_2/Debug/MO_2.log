@@ -1,5 +1,5 @@
 ﻿  MO_2.cpp
-C:\Users\sasha\source\repos\MO_2\MO_2\MO_2.cpp(107,27): warning C4101: vector: неиспользованная локальная переменная
-C:\Users\sasha\source\repos\MO_2\MO_2\MO_2.cpp(136,19): warning C4101: eps_i: неиспользованная локальная переменная
-C:\Users\sasha\source\repos\MO_2\MO_2\MO_2.cpp(136,12): warning C4101: eps_f: неиспользованная локальная переменная
+C:\Users\sasha\source\repos\MO_2\MO_2\Method_0.h(98,31): warning C4101: vector: неиспользованная локальная переменная
+C:\Users\sasha\source\repos\MO_2\MO_2\MO_2.cpp(26,19): warning C4101: eps_i: неиспользованная локальная переменная
+C:\Users\sasha\source\repos\MO_2\MO_2\MO_2.cpp(26,12): warning C4101: eps_f: неиспользованная локальная переменная
   MO_2.vcxproj -> C:\Users\sasha\source\repos\MO_2\Debug\MO_2.exe
