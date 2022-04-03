@@ -1,15 +1,24 @@
 #pragma once
 #include <iostream>
+#include<iomanip>
 #include<cmath>
 using namespace std;
 
 class method_0
 {
+    double d1(double t)
+    {
+        return((2 * t + sqrt(t) - t) / 2 * sqrt(2));
+    }
+    double d2(double t)
+    {
+        return(t/(2*sqrt(2)*(sqrt(3)-1)));
+    }
 
     point create_point(point point0, point vector)//создание доп 2 точек
     {
-        point0.x = point0.x + 0.05 * vector.x;
-        point0.y = point0.y + 0.05 * vector.y;
+        point0.x = point0.x + 0.05*vector.x;
+        point0.y = point0.y + 0.05* vector.y;
         return point0;
     }
     void sort(point* point_array)
@@ -33,19 +42,23 @@ class method_0
         return new_point;
     }
 
-    void reduction(point* point_array)
+    void reduction(point *point_array)
     {
         for (int i = 1; i < 3; i++)
         {
             point_array[i].x = point_array[0].x + 0.5 * (point_array[i].x - point_array[0].x);
             point_array[i].y = point_array[0].y + 0.5 * (point_array[i].y - point_array[0].y);
         }
+        point_array[1].f = function(point_array[1].x, point_array[1].y);
+        point_array[2].f = function(point_array[2].x, point_array[2].y);
     }
+
     point compression(point worst, point mid, double betta)
     {
         worst.x = mid.x + betta * (worst.x - mid.x);
         worst.y = mid.y + betta * (worst.y - mid.y);
         worst.f = function(worst.x, worst.y);
+        count_f++;
         return worst;
     }
 
@@ -55,6 +68,7 @@ class method_0
         new_point.x = mid.x + alpha * (mid.x - point_array[2].x);
         new_point.y = mid.y + alpha * (mid.y - point_array[2].y);
         new_point.f = function(new_point.x, new_point.y);
+        count_f++;
         while (true)
         {
             if (new_point.f >= point_array[2].f)
@@ -95,32 +109,40 @@ class method_0
 public:
     method_0(point point1)
     {
-        point point_array[3], vector, mid;//массив нужен чтобы потом сделать в нем сортровку
+        point point_array[3], mid, point_prew_array[3];//массив нужен чтобы потом сделать в нем сортровку
+        int iter;
+        double flag1;
         double alpha = 1;
         double betta = 0.5;
         double gamma = 2;
-        double flag = 1;
+        bool flag_i= true, flag_f=true;
         int k = 0;
+        double t = 1;
         point_array[0] = point1;
-        point_array[1] = create_point(point1, { 0,1 });//Инициализация 2 оставшихся точек. Может быть нужно не так это делать
-        point_array[2] = create_point(point1, { 1,0 });
-        // point_array[0] = { 0,0 }; point_array[1] = { 1,0 }; point_array[2] = { 0,1 };//Это костыль для теста можно удалить
+       point_array[1] = { point_array[0].x+d1(t),point_array[0].y + d2(t) };
+        point_array[2] = { point_array[0].x + d2(t),point_array[0].y + d1(t) };
         point_array[0].f = function(point_array[0].x, point_array[0].y);
         point_array[1].f = function(point_array[1].x, point_array[1].y);
         point_array[2].f = function(point_array[2].x, point_array[2].y);
-        for (int iter = 1; flag > eps; iter++)
+        count_f = 3;
+        for (iter = 1; flag_f; iter++)
         {
-            flag = 0;
+            
             sort(point_array);//сортировка по возрастанию (0 эл-т самый маленький)
+            for (int i = 0; i < 3; i++) point_prew_array[i] = point_array[i];
             mid = { (point_array[0].x + point_array[1].x) / 2, (point_array[0].y + point_array[1].y) / 2 };//середина отрезка по меньшим точкам
             mid.f = function(mid.x, mid.y);
-            for (int i = 0; i < 3; i++)
-                flag += point_array[i].f - mid.f;
-            flag = sqrt(flag / 3);
+            count_f++;
             reflection(alpha, betta, gamma, mid, point_array);
-            std::cout << point_array[0].f << " " << point_array[1].f << " " << point_array[2].f << endl;
+            flag1 = sqrt(pow(point_array[0].f,2) - pow(mid.f,2))/3;
+            if (flag1 < eps_f) flag_f = false;
+            cout << iter<<": Direction: (" << mid.x - point_array[2].x << " , " << mid.x - point_array[2].x << ") "<<endl;
+            for(int i=0; i<3; i++) cout << setprecision(11)<< " (" << abs(point_array[i].x - point_prew_array[i].x) << ", " << abs(point_array[i].y - point_prew_array[i].y) << " , " << abs(point_array[i].f - point_prew_array[i].f)<<")  "<<endl;
+            cout << setprecision(11) <<"("<< point_array[0].x << ", " << point_array[0].y << ") " << point_array[0].f << endl;
+           
         }
-        std::cout << point_array[0].x << " " << point_array[0].y << " " << point_array[0].f;
+        cout << setprecision(11) << point_array[0].x << " " << point_array[0].y << " " << point_array[0].f<<endl;
+        std::cout << "Iter: " << iter;
     }
 
 };

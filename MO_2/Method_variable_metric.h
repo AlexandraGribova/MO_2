@@ -5,6 +5,7 @@ using namespace std;
 
 class method_variable_metric
 {
+	int count_f = 0;
 	double delta = 1E-8;
 	double diff_x(point point1)//маасив аргументов/по какой переменной/в какую функцию подставляем/шаг
 	{
@@ -12,8 +13,10 @@ class method_variable_metric
 		double d0 = point1.x;
 		point1.x += h;
 		double f_right = function(point1.x, point1.y);
+		count_f++;
 		point1.x = d0 - h;
 		double f_left = function(point1.x, point1.y);
+		count_f++;
 		point1.x = d0;
 		return (f_right - f_left) / (2 * h);
 	}
@@ -23,8 +26,10 @@ class method_variable_metric
 		double d0 = point1.y;
 		point1.y += h;
 		double f_right = function(point1.x, point1.y);
+		count_f++;
 		point1.y = d0 - h;
 		double f_left = function(point1.x, point1.y);
+		count_f++;
 		point1.y = d0;
 		return (f_right - f_left) / (2 * h);
 	}
@@ -45,6 +50,7 @@ class method_variable_metric
 		{
 			lymbda += delta;
 			h = delta;
+			count_f+=2;
 		}
 		else 
 		{
@@ -57,7 +63,7 @@ class method_variable_metric
 		while (function(point1.x + p0.x * lymbda_previous, point1.y + p0.y * lymbda_previous) > function(point1.x + p0.x * lymbda, point1.y + p0.y * lymbda))
 		{
 			h *= 2;
-
+			count_f += 2;
 			lymbda_previous = lymbda;
 			lymbda = lymbda + h;
 		}
@@ -75,10 +81,11 @@ class method_variable_metric
 		double x2 = a + B_COEFF * (b - a);
 		double  f1 = function(point1.x + pk.x * x1, point1.y + pk.y * x1);
 		double  f2 = function(point1.x + pk.x * x2, point1.y + pk.y * x2);
+		count_f += 2;
 		double a00, b00;//значение на предыдущей итерации
 		fcount += 2;
 
-		for (i = 0; abs(b - a) > eps; i++)
+		for (i = 0; abs(b - a) > 1E-8; i++)
 		{
 			a00 = a;
 			b00 = b;
@@ -89,6 +96,7 @@ class method_variable_metric
 				f1 = f2;
 				x2 = a + B_COEFF * (b - a);
 				f2 = function(point1.x + pk.x * x2, point1.y + pk.y * x2);
+				count_f++;
 			}
 
 			else
@@ -98,6 +106,7 @@ class method_variable_metric
 				f2 = f1;
 				x1 = a + A_COEFF * (b - a);
 				f1 = function(point1.x + pk.x * x1, point1.y + pk.y * x1);
+				count_f++;
 			}
 		}
 		return (a + b) / 2;
@@ -124,7 +133,7 @@ class method_variable_metric
 		divider = multiplier[0] * yk[0] + multiplier[1] * yk[1];
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 2; j++)
-				(*H0)[i][j] = multiplier[i] * multiplier[j]/divider;
+				(*H0)[i][j] += multiplier[i] * multiplier[j]/divider;
 
 		/*int I[2][2] = {{ 1,0 }, { 0,1 }};
 		double yk_sk[2][2] = { {yk.x * sk.x,yk.x * sk.y},{yk.y * sk.x,yk.y * sk.y} };
@@ -145,7 +154,7 @@ public:
 		H0[0][0] = H0[1][1] = 1;//единичная матрица
 		grad1=find_grad(point1);
 		check = sqrt(pow(grad1.x, 2) + pow(grad1.y, 2));
-		while (check > eps)
+		for (int iter = 1; check > eps_f; iter++)
 		{
 			pk.x = -(H0[0][0] * grad1.x + H0[0][1] * grad1.y);
 			pk.y =-( H0[1][0] * grad1.x + H0[1][1] * grad1.y);
@@ -161,7 +170,8 @@ public:
 			point1 = point2;
 			grad1 = grad2;
 			check = sqrt(pow(grad1.x, 2) + pow(grad1.y, 2));
-			cout << point1.x << " " << point1.y << endl;
+			cout << iter << " " << count_f;
+			cout<< setprecision(11)<<" "<<point1.x << " " << point1.y << " " << function(point1.x, point1.y) << endl;
 		}
 	}
 };
